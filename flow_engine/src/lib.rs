@@ -28,9 +28,11 @@ pub mod engine {
         }
 
         #[derive(Serialize, Deserialize, Debug)]
+        #[serde(rename(serialize = "ser_name"))]
         pub struct Inlet {
             pub id: String,
             pub name: String,
+            #[serde(rename = "type")]
             pub _type: String,
             pub required: bool
         }
@@ -39,6 +41,7 @@ pub mod engine {
         pub struct Outlet {
             pub id: String,
             pub name: String,
+            #[serde(rename = "type")]
             pub _type: String
         }
 
@@ -58,21 +61,33 @@ pub mod engine {
                 }
             }
         }
-    }
 
-    pub fn run_flow(state: &state::State, triggered_by: &str) {
-        let mut stack: Vec<&str> = Vec::new();
-        stack.push(triggered_by);
-        while let Some(ptr) = stack.pop() {
-            for ele in &state.graph.nodes {
-                if ele.id == ptr {
-                    let data = try_load_wasm_file(&ele.source).unwrap();
-                    let results = try_run_wasm(data, "add", r#"{"a": 2, "b": 3}"#).unwrap();
-                    println!("{results}");
+        pub fn try_find_node<'a>(nodes: &'a Vec<Node>, node_id: &str) -> Option<&'a Node> {
+            for ele in nodes {
+                if ele.id == node_id {
+                    return Some(ele);
                 }
             }
+            None
+        }
+    }
+
+    pub fn run_flow(state: state::State, triggered_by: &str) -> state::State {
+        let mut stack: Vec<&str> = Vec::new();
+        stack.push(triggered_by);
+
+        while let Some(ptr) = stack.pop() {
+
+            let current_node: &state::Node = state::try_find_node(&state.graph.nodes, ptr).unwrap();
+
+            let data: Vec<u8> = try_load_wasm_file(&current_node.source).unwrap();
+            let results: String = try_run_wasm(data, "add", r#"{"a": 2, "b": 3}"#).unwrap();
+            println!("{results}");
+
             println!("{ptr}");
         }
+
+        state
     }
 
     fn try_load_wasm_file(file_path: &str) -> Result<Vec<u8>, String> {

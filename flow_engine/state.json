@@ -3,10 +3,10 @@
   "graph": {
     "nodes": [
       {"id": "n_asdfasdfg234f","name": "add", "source": "std/math/add.wasm", "inlets": [
-        {"id": "in_as3dsffg2334f", "name": "a", "_type": "number", "required": true},
-        {"id": "in_42dgsjdfg22344f", "name": "b", "_type": "number", "required": true}],
+        {"id": "in_as3dsffg2334f", "name": "a", "type": "number", "required": true},
+        {"id": "in_42dgsjdfg22344f", "name": "b", "type": "number", "required": true}],
        "outlets": [
-        {"id": "out_asdfasdafdwer234f", "name": "a", "_type": "number"}
+        {"id": "out_asdfasdafdwer234f", "name": "a", "type": "number"}
        ]}
     ],
     "edges": []
