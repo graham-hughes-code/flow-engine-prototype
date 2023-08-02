@@ -7,6 +7,10 @@
         {"id": "in_42dgsjdfg22344f", "name": "b", "type": "number", "required": true}],
        "outlets": [
         {"id": "out_asdfasdafdwer234f", "name": "a", "type": "number"}
+       ]},
+       {"id": "n_tysfsaddfgjgff","name": "add", "source": "std/constant/constant.wasm", "inlets": [],
+       "outlets": [
+        {"id": "out_aadfadfe423hs", "name": "a", "type": "number"}
        ]}
     ],
     "edges": []

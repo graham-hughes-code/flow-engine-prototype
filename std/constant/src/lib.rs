@@ -2,6 +2,7 @@ use extism_pdk::*;
 use serde::Serialize;
 
 #[derive(Serialize)]
+#[serde(untagged)]
 enum OutputValue {
     S(String),
     N(f64)
@@ -13,7 +14,7 @@ struct Output {
 }
 
 #[plugin_fn]
-pub fn add(input: String) -> FnResult<Json<Output>> {
+pub fn constant(input: String) -> FnResult<Json<Output>> {
     Ok(Json(Output { a: OutputValue::S(String::from("hello world")) }))
 }
 
