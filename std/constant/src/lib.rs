@@ -1,21 +1,40 @@
 use extism_pdk::*;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
+struct Input {
+    pub context: Context
+}
+
+#[derive(Serialize, Deserialize)]
+struct Context {
+    pub value: ConstantValue
+}
+
+#[derive(Serialize, Deserialize)]
 #[serde(untagged)]
-enum OutputValue {
+enum ConstantValue {
     S(String),
     N(f64)
 }
 
 #[derive(Serialize)]
 struct Output {
-    pub a: OutputValue
+    pub a: ConstantValue
 }
 
 #[plugin_fn]
 pub fn constant(input: String) -> FnResult<Json<Output>> {
-    Ok(Json(Output { a: OutputValue::S(String::from("hello world")) }))
+    let input_data: Input;
+
+    match serde_json::from_str(&input) {
+        Ok(data) => {
+            input_data = data;
+        },
+        Err(err) => return Err(WithReturnCode::from(err))
+    }
+
+    Ok(Json(Output { a: input_data.context.value }))
 }
 
 

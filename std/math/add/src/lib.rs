@@ -4,7 +4,8 @@ use serde::{Serialize, Deserialize};
 #[derive(Serialize, Deserialize)]
 struct Input {
     pub a: f64,
-    pub b: f64
+    pub b: f64,
+    pub context: String
 }
 
 #[derive(Serialize)]

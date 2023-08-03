@@ -2,13 +2,17 @@
   "version": "0.0.1",
   "graph": {
     "nodes": [
-      {"id": "n_asdfasdfg234f","name": "add", "source": "std/math/add.wasm", "inlets": [
+      {"id": "n_asdfasdfg234f","name": "add", "source": "std/math/add.wasm", 
+        "context": "{}",
+        "inlets": [
         {"id": "in_as3dsffg2334f", "name": "a", "type": "number", "required": true},
         {"id": "in_42dgsjdfg22344f", "name": "b", "type": "number", "required": true}],
        "outlets": [
         {"id": "out_asdfasdafdwer234f", "name": "a", "type": "number"}
        ]},
-       {"id": "n_tysfsaddfgjgff","name": "add", "source": "std/constant/constant.wasm", "inlets": [],
+       {"id": "n_tysfsaddfgjgff","name": "add", "source": "std/constant/constant.wasm",
+        "context": "{\"value\": 3}",
+        "inlets": [],
        "outlets": [
         {"id": "out_aadfadfe423hs", "name": "a", "type": "number"}
        ]}

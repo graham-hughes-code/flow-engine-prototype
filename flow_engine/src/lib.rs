@@ -23,6 +23,7 @@ pub mod engine {
             pub id: String,
             pub name: String,
             pub source: String,
+            pub context: String,
             pub inlets: Vec<Inlet>,
             pub outlets: Vec<Outlet>
         }
@@ -81,7 +82,7 @@ pub mod engine {
             let current_node: &state::Node = state::try_find_node(&state.graph.nodes, ptr).unwrap();
 
             let data: Vec<u8> = try_load_wasm_file(&current_node.source).unwrap();
-            let results: String = try_run_wasm(data, "add", r#"{"a": 2, "b": 3}"#).unwrap();
+            let results: String = try_run_wasm(data, "constant", r#"{"context": {"value": 10} }"#).unwrap();
             println!("{results}");
 
             println!("{ptr}");
@@ -101,7 +102,7 @@ pub mod engine {
         let context: Context = Context::new();
         let mut plugin = Plugin::new(&context, data, [], false).unwrap();
         match plugin.call(&name, &input) {
-            Ok(content) => Ok(str::from_utf8(content).unwrap().to_string()),
+            Ok(result) => Ok(str::from_utf8(result).unwrap().to_string()),
             Err(err) => {
                 print!("error: {:?}", err);
                 return Err("error".to_string());
