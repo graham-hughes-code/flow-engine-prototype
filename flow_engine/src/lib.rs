@@ -2,6 +2,8 @@ pub mod engine {
     use std::fs::read;
     use std::str;
     use extism::{Plugin, Context};
+    use serde_json::Value;
+    use serde::{Deserialize, Serialize};
 
     pub mod state {
         use serde::{Deserialize, Serialize};
@@ -82,7 +84,8 @@ pub mod engine {
             let current_node: &state::Node = state::try_find_node(&state.graph.nodes, ptr).unwrap();
 
             let data: Vec<u8> = try_load_wasm_file(&current_node.source).unwrap();
-            let results: String = try_run_wasm(data, "constant", r#"{"context": {"value": 10} }"#).unwrap();
+            let current_context_json: Value =  pull_context(&current_node.context);
+            let results: String = try_run_wasm(data, &current_node.name, &serde_json::to_string(&current_context_json).unwrap()).unwrap();
             println!("{results}");
 
             println!("{ptr}");
@@ -106,6 +109,31 @@ pub mod engine {
             Err(err) => {
                 print!("error: {:?}", err);
                 return Err("error".to_string());
+            }
+        }
+    }
+
+
+    #[derive(Serialize, Deserialize, Debug)]
+    struct ContextWrapper {
+        pub context: Value
+    }
+
+    fn pull_context(con: &str) -> Value {
+        serde_json::value::to_value(ContextWrapper {
+            context: serde_json::from_str( con ).unwrap()
+        }).unwrap()
+    }
+
+    fn merge(a: &mut Value, b: &Value) {
+        match (a, b) {
+            (&mut Value::Object(ref mut a), &Value::Object(ref b)) => {
+                for (k, v) in b {
+                    merge(a.entry(k.clone()).or_insert(Value::Null), v);
+                }
+            }
+            (a, b) => {
+                *a = b.clone();
             }
         }
     }

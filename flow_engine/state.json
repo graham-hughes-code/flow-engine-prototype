@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "graph": {
     "nodes": [
-      {"id": "n_asdfasdfg234f","name": "add", "source": "std/math/add.wasm", 
+      {"id": "n_asdfasdfg234f","name": "add", "source": "std/math/add.wasm",
         "context": "{}",
         "inlets": [
         {"id": "in_as3dsffg2334f", "name": "a", "type": "number", "required": true},
@@ -10,13 +10,26 @@
        "outlets": [
         {"id": "out_asdfasdafdwer234f", "name": "a", "type": "number"}
        ]},
-       {"id": "n_tysfsaddfgjgff","name": "add", "source": "std/constant/constant.wasm",
+       {"id": "n_tysfsaddfgjgff","name": "constant", "source": "std/constant/constant.wasm",
         "context": "{\"value\": 3}",
         "inlets": [],
        "outlets": [
         {"id": "out_aadfadfe423hs", "name": "a", "type": "number"}
+       ]},
+       {"id": "n_tysfsadgsagjgff","name": "constant", "source": "std/constant/constant.wasm",
+        "context": "{\"value\": 2}",
+        "inlets": [],
+       "outlets": [
+        {"id": "out_adddddfe423hs", "name": "a", "type": "number"}
        ]}
     ],
-    "edges": []
+    "edges": [
+      {"id": "edge_adfadfgewbaweg",
+       "start": "out_aadfadfe423hs",
+       "end": "in_as3dsffg2334f"},
+       {"id": "edge_adfadfgewbaweg",
+       "start": "out_adddddfe423hs",
+       "end": "in_42dgsjdfg22344f"}
+      ]
   }
 }
