@@ -99,6 +99,37 @@ pub mod engine {
 
             }
 
+            pub fn try_find_node_next_ids(&self, node_id: &str) -> Option<Vec<String>> {
+                let mut next_node_ids: Vec<String> = Vec::new();
+
+                let current_node: &Node = self.try_find_node(node_id).unwrap();
+                let mut current_node_outlet_id: Vec<&str> = Vec::new();
+                for outlet in &current_node.outlets {
+                    current_node_outlet_id.push(&outlet.id);
+                }
+
+                let mut inlet_ids: Vec<&str> = Vec::new();
+                for edge in &self.graph.edges {
+                    if current_node_outlet_id.iter().any(|&i| i == edge.start) {
+                        inlet_ids.push(&edge.end);
+                    }
+                }
+
+                for node in &self.graph.nodes {
+                    for inlet in &node.inlets {
+                        if inlet_ids.iter().any(|&i| i == inlet.id) {
+                            next_node_ids.push(node.id.clone());
+                        }
+                    }
+                }
+
+                if next_node_ids.is_empty() {
+                    return None;
+                }
+
+                Some(next_node_ids)
+            }
+
             pub fn try_find_node(&self, node_id: &str) -> Option<&Node> {
                 for ele in &self.graph.nodes {
                     if ele.id == node_id {
@@ -114,12 +145,12 @@ pub mod engine {
 
         state.clear_last_values();
 
-        let mut stack: Vec<&str> = Vec::new();
-        stack.push(triggered_by);
+        let mut stack: Vec<String> = Vec::new();
+        stack.push(triggered_by.into());
 
         while let Some(ptr) = stack.pop() {
 
-            let current_node: &state::Node = state.try_find_node(ptr).unwrap();
+            let current_node: &state::Node = state.try_find_node(&ptr).unwrap();
             println!("{ptr}");
 
             // TODO: check all inlets and push to stack if not last_value
@@ -133,7 +164,9 @@ pub mod engine {
                 &serde_json::to_string(&current_context_json).unwrap()
             ).unwrap();
             state.push_values_to_edges(&ptr, &results);
-            // TODO: call outlet nodes
+
+            let mut node_ids = state.try_find_node_next_ids(&ptr).unwrap();
+            stack.append(&mut node_ids);
 
             println!("{results}");
 
