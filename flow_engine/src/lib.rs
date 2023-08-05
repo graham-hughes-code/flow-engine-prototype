@@ -7,6 +7,9 @@ pub mod engine {
 
     pub mod state {
         use serde::{Deserialize, Serialize};
+        use serde_json::Value;
+        use std::collections::HashMap;
+
 
         #[derive(Serialize, Deserialize, Debug)]
         pub struct State {
@@ -63,35 +66,78 @@ pub mod engine {
                     Err(e) => Err(format!("Error malformed state json {:?}", e))
                 }
             }
-        }
 
-        pub fn try_find_node<'a>(nodes: &'a Vec<Node>, node_id: &str) -> Option<&'a Node> {
-            for ele in nodes {
-                if ele.id == node_id {
-                    return Some(ele);
+            pub fn clear_last_values(&mut self) {
+                for edge in &mut self.graph.edges{
+                    edge.last_value = None;
                 }
             }
-            None
+
+            pub fn push_values_to_edges(&mut self, node_id: &str, results: &str) {
+                let mut outlet_to_result: HashMap<String, Value>  = HashMap::new();
+
+                let current_node: &Node = self.try_find_node(node_id).unwrap();
+
+                for outlet in &current_node.outlets {
+
+                    let results_value: Value = serde_json::from_str(results).unwrap();
+                    let value_to_push: &Value = &results_value[&outlet.name];
+
+                    outlet_to_result.insert(
+                        outlet.id.clone(),
+                        value_to_push.clone()
+                    );
+                }
+
+                for (outlet_id, value_to_push) in outlet_to_result{
+                    for edge in &mut self.graph.edges {
+                        if edge.start == outlet_id {
+                            edge.last_value = Some(serde_json::to_string(&value_to_push).unwrap());
+                        }
+                    }
+                }
+
+            }
+
+            pub fn try_find_node(&self, node_id: &str) -> Option<&Node> {
+                for ele in &self.graph.nodes {
+                    if ele.id == node_id {
+                        return Some(&ele);
+                    }
+                }
+                None
+            }
         }
     }
 
-    pub fn run_flow(state: state::State, triggered_by: &str) -> state::State {
+    pub fn run_flow(state: &mut state::State, triggered_by: &str){
+
+        state.clear_last_values();
+
         let mut stack: Vec<&str> = Vec::new();
         stack.push(triggered_by);
 
         while let Some(ptr) = stack.pop() {
 
-            let current_node: &state::Node = state::try_find_node(&state.graph.nodes, ptr).unwrap();
+            let current_node: &state::Node = state.try_find_node(ptr).unwrap();
+            println!("{ptr}");
+
+            // TODO: check all inlets and push to stack if not last_value
+            let current_context_json: Value = pull_context(&current_node.context);
+            // TODO: combine all inlets and context to create input
 
             let data: Vec<u8> = try_load_wasm_file(&current_node.source).unwrap();
-            let current_context_json: Value =  pull_context(&current_node.context);
-            let results: String = try_run_wasm(data, &current_node.name, &serde_json::to_string(&current_context_json).unwrap()).unwrap();
+            let results: String = try_run_wasm(
+                data,
+                &current_node.name,
+                &serde_json::to_string(&current_context_json).unwrap()
+            ).unwrap();
+            state.push_values_to_edges(&ptr, &results);
+            // TODO: call outlet nodes
+
             println!("{results}");
 
-            println!("{ptr}");
         }
-
-        state
     }
 
     fn try_load_wasm_file(file_path: &str) -> Result<Vec<u8>, String> {
@@ -112,7 +158,6 @@ pub mod engine {
             }
         }
     }
-
 
     #[derive(Serialize, Deserialize, Debug)]
     struct ContextWrapper {
