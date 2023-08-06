@@ -33,7 +33,7 @@ pub mod engine {
             pub outlets: Vec<Outlet>
         }
 
-        #[derive(Serialize, Deserialize, Debug)]
+        #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
         #[serde(rename(serialize = "ser_name"))]
         pub struct Inlet {
             pub id: String,
@@ -130,10 +130,42 @@ pub mod engine {
                 Some(next_node_ids)
             }
 
+            pub fn get_inputs_edges_by_node<'a>(&'a self, node: &'a Node) -> HashMap<&Inlet, Option<&Edge>>{
+                let inlet_ids: &Vec<Inlet> = &node.inlets;
+
+                let mut inlet_to_edge: HashMap<&Inlet, Option<&Edge>> = HashMap::new();
+
+                for inlet_id in inlet_ids {
+                    let mut edge: Option<&Edge> = None;
+
+                    for e in &self.graph.edges {
+                        if e.end == inlet_id.id {
+                            edge = Some(e);
+                        }
+                    }
+
+                    inlet_to_edge.insert(inlet_id, edge);
+
+                }
+
+                inlet_to_edge
+            }
+
             pub fn try_find_node(&self, node_id: &str) -> Option<&Node> {
                 for ele in &self.graph.nodes {
                     if ele.id == node_id {
                         return Some(&ele);
+                    }
+                }
+                None
+            }
+
+            pub fn try_find_node_by_outlet_id(&self, outlet_id: &str) -> Option<&Node> {
+                for node in &self.graph.nodes {
+                    for outlet in &node.outlets {
+                        if outlet.id == outlet_id {
+                            return Some(node);
+                        }
                     }
                 }
                 None
@@ -148,27 +180,64 @@ pub mod engine {
         let mut stack: Vec<String> = Vec::new();
         stack.push(triggered_by.into());
 
-        while let Some(ptr) = stack.pop() {
+        'stack_flow: while let Some(ptr) = stack.pop() {
 
             let current_node: &state::Node = state.try_find_node(&ptr).unwrap();
-            println!("{ptr}");
+            println!("PTR: {:?} Name {:?}", ptr, current_node.name);
 
-            // TODO: check all inlets and push to stack if not last_value
+            let mut inputs: Value =  serde_json::json!({});
+
+            let inlet_to_edge = state.get_inputs_edges_by_node(current_node);
+
+            for (inlet, edge) in inlet_to_edge {
+                match edge {
+                    Some(edge) => {
+                        match &edge.last_value {
+                            Some(last_value) => {
+                                let current_input: Value = serde_json::from_str(&last_value).unwrap();
+
+                                let wrapped_current_input = serde_json::json!(
+                                    {
+                                        inlet.name.clone(): current_input
+                                    }
+                                );
+
+                                merge(&mut inputs, &wrapped_current_input);
+                            },
+                            None => {
+                                stack.push(state.try_find_node_by_outlet_id(&edge.start).unwrap().id.clone());
+                                continue 'stack_flow;
+                            }
+                        }
+                    }
+                    None => {
+                        if inlet.required == true {
+                            panic!("required inlet not filled");
+                        }
+                    }
+                }
+            }
+
             let current_context_json: Value = pull_context(&current_node.context);
-            // TODO: combine all inlets and context to create input
+
+            merge(&mut inputs, &current_context_json);
+            println!("inputs: {:?}", serde_json::to_string(&inputs).unwrap());
 
             let data: Vec<u8> = try_load_wasm_file(&current_node.source).unwrap();
             let results: String = try_run_wasm(
                 data,
                 &current_node.name,
-                &serde_json::to_string(&current_context_json).unwrap()
+                &serde_json::to_string(&inputs).unwrap()
             ).unwrap();
+
+            println!("results: {results}");
+
             state.push_values_to_edges(&ptr, &results);
 
-            let mut node_ids = state.try_find_node_next_ids(&ptr).unwrap();
-            stack.append(&mut node_ids);
-
-            println!("{results}");
+            match state.try_find_node_next_ids(&ptr) {
+                Some(mut next_node_ids) => stack.append(&mut next_node_ids),
+                None => continue
+            }
 
         }
     }
@@ -186,7 +255,7 @@ pub mod engine {
         match plugin.call(&name, &input) {
             Ok(result) => Ok(str::from_utf8(result).unwrap().to_string()),
             Err(err) => {
-                print!("error: {:?}", err);
+                println!("Error On Node \"{}\": {:?}", name, err);
                 return Err("error".to_string());
             }
         }

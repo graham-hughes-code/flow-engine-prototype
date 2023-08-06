@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 struct Input {
     pub a: f64,
     pub b: f64,
-    pub context: String
+    pub context: serde_json::Value
 }
 
 #[derive(Serialize)]
