@@ -28,7 +28,7 @@
        "outlets": [
         {"id": "out_ahhsadfe423hs", "name": "a", "type": "number"}
        ]},
-       {"id": "n_asdafdfjlf4f","name": "add", "source": "std/math/add.wasm",
+       {"id": "n_asdafdfjlf4f","name": "div", "source": "std/math/div.wasm",
         "context": "{}",
         "inlets": [
         {"id": "in_as3afdlvk34f", "name": "a", "type": "number", "required": true},
