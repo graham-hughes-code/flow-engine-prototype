@@ -8,7 +8,7 @@
         {"id": "in_as3dsffg2334f", "name": "a", "type": "number", "required": true},
         {"id": "in_42dgsjdfg22344f", "name": "b", "type": "number", "required": true}],
        "outlets": [
-        {"id": "out_asdfasdafdwer234f", "name": "a", "type": "number"}
+        {"id": "out_asdfasdafdwer234f", "name": "c", "type": "number"}
        ]},
        {"id": "n_tysfsaddfgjgff","name": "constant", "source": "std/constant/constant.wasm",
         "context": "{\"value\": 3}",
@@ -21,6 +21,20 @@
         "inlets": [],
        "outlets": [
         {"id": "out_adddddfe423hs", "name": "a", "type": "number"}
+       ]},
+       {"id": "n_gkeasdfagjgff","name": "constant", "source": "std/constant/constant.wasm",
+        "context": "{\"value\": 5}",
+        "inlets": [],
+       "outlets": [
+        {"id": "out_ahhsadfe423hs", "name": "a", "type": "number"}
+       ]},
+       {"id": "n_asdafdfjlf4f","name": "add", "source": "std/math/add.wasm",
+        "context": "{}",
+        "inlets": [
+        {"id": "in_as3afdlvk34f", "name": "a", "type": "number", "required": true},
+        {"id": "in_42dgterl344f", "name": "b", "type": "number", "required": true}],
+       "outlets": [
+        {"id": "out_asdfdaslw2er234f", "name": "c", "type": "number"}
        ]}
     ],
     "edges": [
@@ -29,7 +43,13 @@
        "end": "in_as3dsffg2334f"},
        {"id": "edge_adfadfgewbaweg",
        "start": "out_adddddfe423hs",
-       "end": "in_42dgsjdfg22344f"}
+       "end": "in_42dgsjdfg22344f"},
+       {"id": "edge_ad3kwedfkewg",
+       "start": "out_asdfasdafdwer234f",
+       "end": "in_as3afdlvk34f"},
+       {"id": "edge_adfbadffewg",
+       "start": "out_ahhsadfe423hs",
+       "end": "in_42dgterl344f"}
       ]
   }
 }
