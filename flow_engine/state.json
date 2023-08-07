@@ -35,6 +35,19 @@
         {"id": "in_42dgterl344f", "name": "b", "type": "number", "required": true}],
        "outlets": [
         {"id": "out_asdfdaslw2er234f", "name": "c", "type": "number"}
+       ]},
+       {"id": "n_gkeaadfweradfgff","name": "constant", "source": "std/constant/constant.wasm",
+        "context": "{\"value\": \"## hello _two_\"}",
+        "inlets": [],
+       "outlets": [
+        {"id": "out_ahhs432dfa423hs", "name": "a", "type": "string"}
+       ]},
+       {"id": "n_asdafdftsdf274f","name": "markdown_to_html", "source": "std/markdown_to_html/markdown_to_html.wasm",
+        "context": "{}",
+        "inlets": [
+        {"id": "in_as3939dafvk34f", "name": "a", "type": "string", "required": true}],
+       "outlets": [
+        {"id": "out_asdffdasl7234f", "name": "c", "type": "string"}
        ]}
     ],
     "edges": [
@@ -49,7 +62,10 @@
        "end": "in_as3afdlvk34f"},
        {"id": "edge_adfbadffewg",
        "start": "out_ahhsadfe423hs",
-       "end": "in_42dgterl344f"}
+       "end": "in_42dgterl344f"},
+       {"id": "edge_adfb32wewg",
+       "start": "out_ahhs432dfa423hs",
+       "end": "in_as3939dafvk34f"}
       ]
   }
 }
