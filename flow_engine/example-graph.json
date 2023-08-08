@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "graph": {
     "nodes": [
-      {"id": "n_asdfasdfg234f","name": "add", "source": "std/math/add.wasm",
+      {"id": "n_asdfasdfg234f","name": "add", "source": "std/add.wasm",
         "context": "{}",
         "inlets": [
         {"id": "in_as3dsffg2334f", "name": "a", "type": "number", "required": true},
@@ -10,25 +10,25 @@
        "outlets": [
         {"id": "out_asdfasdafdwer234f", "name": "c", "type": "number"}
        ]},
-       {"id": "n_tysfsaddfgjgff","name": "constant", "source": "std/constant/constant.wasm",
+       {"id": "n_tysfsaddfgjgff","name": "constant", "source": "std/constant.wasm",
         "context": "{\"value\": 3}",
         "inlets": [],
        "outlets": [
         {"id": "out_aadfadfe423hs", "name": "a", "type": "number"}
        ]},
-       {"id": "n_tysfsadgsagjgff","name": "constant", "source": "std/constant/constant.wasm",
+       {"id": "n_tysfsadgsagjgff","name": "constant", "source": "std/constant.wasm",
         "context": "{\"value\": 2}",
         "inlets": [],
        "outlets": [
         {"id": "out_adddddfe423hs", "name": "a", "type": "number"}
        ]},
-       {"id": "n_gkeasdfagjgff","name": "constant", "source": "std/constant/constant.wasm",
+       {"id": "n_gkeasdfagjgff","name": "constant", "source": "std/constant.wasm",
         "context": "{\"value\": 5}",
         "inlets": [],
        "outlets": [
         {"id": "out_ahhsadfe423hs", "name": "a", "type": "number"}
        ]},
-       {"id": "n_asdafdfjlf4f","name": "div", "source": "std/math/div.wasm",
+       {"id": "n_asdafdfjlf4f","name": "div", "source": "std/div.wasm",
         "context": "{}",
         "inlets": [
         {"id": "in_as3afdlvk34f", "name": "a", "type": "number", "required": true},
@@ -36,13 +36,13 @@
        "outlets": [
         {"id": "out_asdfdaslw2er234f", "name": "c", "type": "number"}
        ]},
-       {"id": "n_gkeaadfweradfgff","name": "constant", "source": "std/constant/constant.wasm",
+       {"id": "n_gkeaadfweradfgff","name": "constant", "source": "std/constant.wasm",
         "context": "{\"value\": \"## hello _two_\"}",
         "inlets": [],
        "outlets": [
         {"id": "out_ahhs432dfa423hs", "name": "a", "type": "string"}
        ]},
-       {"id": "n_asdafdftsdf274f","name": "markdown_to_html", "source": "std/markdown_to_html/markdown_to_html.wasm",
+       {"id": "n_asdafdftsdf274f","name": "markdown_to_html", "source": "std/markdown_to_html.wasm",
         "context": "{}",
         "inlets": [
         {"id": "in_as3939dafvk34f", "name": "a", "type": "string", "required": true}],
