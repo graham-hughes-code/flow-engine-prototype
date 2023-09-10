@@ -252,7 +252,7 @@ pub mod engine {
     fn try_run_wasm(data: Vec<u8>, name: &str, input: &str) -> Result<String, String> {
         let context: Context = Context::new();
         let mut plugin = Plugin::new(&context, data, [], false).unwrap();
-        match plugin.call(&name, &input) {
+        match plugin.call("node_front_end", &input) {
             Ok(result) => Ok(str::from_utf8(result).unwrap().to_string()),
             Err(err) => {
                 println!("Error On Node \"{}\": {:?}", name, err);
