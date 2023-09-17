@@ -252,13 +252,23 @@ pub mod engine {
     fn try_run_wasm(data: Vec<u8>, name: &str, input: &str) -> Result<String, String> {
         let context: Context = Context::new();
         let mut plugin = Plugin::new(&context, data, [], false).unwrap();
-        match plugin.call("node_front_end", &input) {
+        match plugin.call(&name, &input) {
             Ok(result) => Ok(str::from_utf8(result).unwrap().to_string()),
             Err(err) => {
                 println!("Error On Node \"{}\": {:?}", name, err);
                 return Err("error".to_string());
             }
         }
+    }
+
+    pub fn get_node_frontend(source: &str) -> Result<String, String>{
+        let data: Vec<u8> = try_load_wasm_file(source).unwrap();
+        let results: String = try_run_wasm(
+            data,
+            "node_front_end",
+            ""
+        ).unwrap();
+        Ok(results)
     }
 
     #[derive(Serialize, Deserialize, Debug)]
