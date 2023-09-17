@@ -52,3 +52,10 @@ pub fn describe_node(_: ()) -> FnResult<String>
 
     Ok(dis)
 }
+
+#[plugin_fn]
+pub fn node_front_end(_: ()) -> FnResult<&'static str>
+{
+    let web_comp: &'static str = include_str!("const.js");
+    Ok(web_comp)
+}
