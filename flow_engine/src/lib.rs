@@ -130,7 +130,7 @@ pub mod engine {
                 Some(next_node_ids)
             }
 
-            pub fn get_inputs_edges_by_node<'a>(&'a self, node: &'a Node) -> HashMap<&Inlet, Option<&Edge>>{
+            pub fn get_inputs_edges_by_node<'a>(&'a self, node: &'a Node) -> HashMap<&Inlet, Option<&Edge>> {
                 let inlet_ids: &Vec<Inlet> = &node.inlets;
 
                 let mut inlet_to_edge: HashMap<&Inlet, Option<&Edge>> = HashMap::new();
@@ -173,7 +173,7 @@ pub mod engine {
         }
     }
 
-    pub fn run_flow(state: &mut state::State, triggered_by: &str){
+    pub fn run_flow(state: &mut state::State, triggered_by: &str) {
 
         state.clear_last_values();
 
@@ -261,11 +261,21 @@ pub mod engine {
         }
     }
 
-    pub fn get_node_frontend(source: &str) -> Result<String, String>{
+    pub fn get_node_frontend(source: &str) -> Result<String, String> {
         let data: Vec<u8> = try_load_wasm_file(source).unwrap();
         let results: String = try_run_wasm(
             data,
             "node_front_end",
+            ""
+        ).unwrap();
+        Ok(results)
+    }
+
+    pub fn get_node_def(source: &str) -> Result<String, String> {
+        let data: Vec<u8> = try_load_wasm_file(source).unwrap();
+        let results: String = try_run_wasm(
+            data,
+            "describe_node",
             ""
         ).unwrap();
         Ok(results)
