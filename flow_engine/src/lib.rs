@@ -24,10 +24,17 @@ pub mod engine {
         }
 
         #[derive(Serialize, Deserialize, Debug)]
+        pub struct Pos {
+            pub x: i32,
+            pub y: i32
+        }
+
+        #[derive(Serialize, Deserialize, Debug)]
         pub struct Node {
             pub id: String,
             pub name: String,
             pub source: String,
+            pub pos: Pos,
             pub context: String,
             pub inlets: Vec<Inlet>,
             pub outlets: Vec<Outlet>
@@ -56,6 +63,8 @@ pub mod engine {
             pub id: String,
             pub start: String,
             pub end: String,
+            pub start_let: String,
+            pub end_let: String,
             pub last_value: Option<String>
         }
 
@@ -91,7 +100,7 @@ pub mod engine {
 
                 for (outlet_id, value_to_push) in outlet_to_result{
                     for edge in &mut self.graph.edges {
-                        if edge.start == outlet_id {
+                        if edge.start_let == outlet_id {
                             edge.last_value = Some(serde_json::to_string(&value_to_push).unwrap());
                         }
                     }
@@ -110,8 +119,8 @@ pub mod engine {
 
                 let mut inlet_ids: Vec<&str> = Vec::new();
                 for edge in &self.graph.edges {
-                    if current_node_outlet_id.iter().any(|&i| i == edge.start) {
-                        inlet_ids.push(&edge.end);
+                    if current_node_outlet_id.iter().any(|&i| i == edge.start_let) {
+                        inlet_ids.push(&edge.end_let);
                     }
                 }
 
@@ -139,7 +148,7 @@ pub mod engine {
                     let mut edge: Option<&Edge> = None;
 
                     for e in &self.graph.edges {
-                        if e.end == inlet_id.id {
+                        if e.end_let == inlet_id.id {
                             edge = Some(e);
                         }
                     }
@@ -205,7 +214,7 @@ pub mod engine {
                                 merge(&mut inputs, &wrapped_current_input);
                             },
                             None => {
-                                stack.push(state.try_find_node_by_outlet_id(&edge.start).unwrap().id.clone());
+                                stack.push(state.try_find_node_by_outlet_id(&edge.start_let).unwrap().id.clone());
                                 continue 'stack_flow;
                             }
                         }
